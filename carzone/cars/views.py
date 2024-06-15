@@ -85,6 +85,11 @@ def search(request):
     if city:
         cars_list = cars_list.filter(city__iexact=city)
 
+    # Filter by transmission
+    transmission = request.GET.get('transmission')
+    if transmission:
+        cars_list = cars_list.filter(transmission__iexact=transmission)
+
     # Filter by year
     year = request.GET.get('year')
     if year:
