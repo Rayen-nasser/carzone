@@ -27,6 +27,7 @@ def logout(request):
         return redirect('home')
     return redirect('home')
 
+
 def register(request):
     if request.method == 'POST':
         firstname = request.POST['firstname']
@@ -38,25 +39,26 @@ def register(request):
 
         if password == confirm_password:
             if User.objects.filter(username=username).exists():
-                messages.error(request, 'username already exists!')
+                messages.error(request, 'Username already exists!')
+                return redirect('register')
+            elif User.objects.filter(email=email).exists():
+                messages.error(request, 'Email already exists!')
                 return redirect('register')
             else:
-                if User.objects.filter(email=email).exists():
-                    messages.error(request, 'email already exists!')
-                    return redirect('register')
-                else:
+                # Create user
+                user = User.objects.create_user(first_name=firstname, last_name=lastname, username=username,
+                                                email=email, password=password)
 
-                    user = User.objects.create_user(first_name=firstname, last_name=lastname, username=username, email=email, password=password)
-                    auth.login(request, user)
-                    return redirect('dashboard')
-                    user.save()
-                    messages.success(request, 'You are registered successfully.')
-                    return redirect('login')
+                # Log in the user after successful registration
+                user.backend = 'django.contrib.auth.backends.ModelBackend'
+                auth.login(request, user)
+
+                messages.success(request, 'You are registered successfully.')
+                return redirect('dashboard')  # Redirect to dashboard after successful registration and login
         else:
-            messages.error(request, "Password don't match")
+            messages.error(request, "Passwords don't match")
             return redirect('register')
     else:
         return render(request, 'accounts/register.html')
-
 def dashboard(request):
     return render(request, 'accounts/dashboard.html')

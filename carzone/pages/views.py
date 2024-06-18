@@ -3,6 +3,9 @@ from django.db.models import Max, Min
 from django.shortcuts import render
 from .models import Team
 from cars.models import Car
+from django.contrib import messages
+# from ..contact.models import Contact
+
 
 # Utility function for pagination
 def paginate_items(request, items, num_items=4):
@@ -53,4 +56,16 @@ def services(request):
 
 # Contact view
 def contact(request):
+    # if request.method == 'POST':
+    #     name = request.POST['name']
+    #     email = request.POST['email']
+    #     phone = request.POST['phone']
+    #     message = request.POST['message']
+    #     if name & email & phone & message :
+    #          contact  = Contact.objects.create_contact(name=name, email=email, phone=phone, message=message)
+    #          contact.save()
+    #          messages.success(request, 'You are send message successfully.')
+    #     else:
+    #          messages.error(request, 'Missing fields empty.')
+
     return render(request, 'pages/contact.html')

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     # Providers
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.google',
+    'contacts',
 
 ]
 
@@ -65,30 +66,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
 ]
-
-SOCIALACCOUNT_PROVIDERS = {
-    'facebook': {
-        'METHOD': 'js_sdk',  # Use js_sdk method
-        'SDK_URL': '//connect.facebook.net/en_US/sdk.js',
-        'SCOPE': ['email', 'public_profile'],  # Ensure 'email' is here
-        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
-        'INIT_PARAMS': {'cookie': True},
-        'FIELDS': [
-            'id',
-            'first_name',
-            'last_name',
-            'middle_name',
-            'name',
-            'name_format',
-            'picture',
-            'short_name'
-        ],
-        'EXCHANGE_TOKEN': True,
-        'LOCALE_FUNC': lambda request: 'en_US',
-        'VERIFIED_EMAIL': False,
-        'VERSION': 'v11.0',
-    }
-}
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',  # Default backend
@@ -186,4 +163,12 @@ MESSAGE_TAGS = {
 }
 
 SITE_ID = 1
+
+# Email sending configuration
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'rayenn38@gmail.com'
+EMAIL_HOST_PASSWORD = 'vmdc bsdn qmjs bcht'
+EMAIL_USE_TSL = True
 
