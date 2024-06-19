@@ -1,6 +1,8 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib import messages, auth
+from contacts.models import Contact
 
 def login(request):
     if request.method == 'POST':
@@ -18,7 +20,6 @@ def login(request):
             return redirect('login')
 
     return render(request, 'accounts/login.html')
-
 def logout(request):
     if request.method == 'POST':
         print("logout")
@@ -26,8 +27,6 @@ def logout(request):
         # messages.success(request, 'You are successfully logged out.')
         return redirect('home')
     return redirect('home')
-
-
 def register(request):
     if request.method == 'POST':
         firstname = request.POST['firstname']
@@ -60,5 +59,11 @@ def register(request):
             return redirect('register')
     else:
         return render(request, 'accounts/register.html')
+
+@login_required(login_url='login')
 def dashboard(request):
-    return render(request, 'accounts/dashboard.html')
+    user_contacts = Contact.objects.order_by('-created_date').filter(user_id = request.user.id)
+    context = {
+        'inquires': user_contacts
+    }
+    return render(request, 'accounts/dashboard.html', context)

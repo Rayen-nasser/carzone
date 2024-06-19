@@ -1,10 +1,15 @@
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.db.models import Max, Min
 from django.shortcuts import render
 from .models import Team
 from cars.models import Car
 from django.contrib import messages
-# from ..contact.models import Contact
+from carzone import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # Utility function for pagination
@@ -56,16 +61,29 @@ def services(request):
 
 # Contact view
 def contact(request):
-    # if request.method == 'POST':
-    #     name = request.POST['name']
-    #     email = request.POST['email']
-    #     phone = request.POST['phone']
-    #     message = request.POST['message']
-    #     if name & email & phone & message :
-    #          contact  = Contact.objects.create_contact(name=name, email=email, phone=phone, message=message)
-    #          contact.save()
-    #          messages.success(request, 'You are send message successfully.')
-    #     else:
-    #          messages.error(request, 'Missing fields empty.')
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        message_content = request.POST.get('message', '').strip()
+
+        if name and email and phone and message_content:
+            try:
+                admin_info = User.objects.get(is_superuser=True)
+                admin_email = admin_info.email
+                send_mail(
+                    "New Car Inquiry",
+                    f'Name: {name}\nEmail: {email}\nPhone: {phone}\nMessage: {message_content}',
+                    "nasserrayen907@gmail.com",
+                    [admin_email],
+                    fail_silently=False,
+                )
+                messages.success(request, 'Your message has been sent successfully.')
+                return redirect('contact')
+            except Exception as e:
+                logger.error(f"Failed to send email: {e}")
+                messages.error(request, 'An error occurred while sending your message. Please try again later.')
+        else:
+            messages.error(request, 'All fields are required. Please fill in all fields.')
 
     return render(request, 'pages/contact.html')
