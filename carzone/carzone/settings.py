@@ -69,7 +69,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'carzone.wsgi.application'
 
-DATABASES = {}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'carzonedb',
+        'USER': 'postgres',
+        'PASSWORD': 'root',
+        'host': 'localhost'
+    }
+}
 DATABASES['default'] = dj_database_url.parse(config("DATABASE_URL"))
 
 AUTH_PASSWORD_VALIDATORS = [
